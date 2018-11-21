@@ -2,15 +2,16 @@
 arduino micro based keyboard (mame controller) suitable for commander keen
 
 ## status:
-just started ...
+- all possible inputs of arduino covered now
+- basic arduino program with 3 keys
 
 ## next steps:
 1) concept proof
 2) model (learn freecad)
 
 ## concept proof:
-1) connect a few buttons to arduino micro
-2) make it keyboarding
+\1) connect a few buttons to arduino micro .. done
+\2) make it keyboarding .. done
 3) can i do doublekey (y/t and n/d)?
 
 ## keys needed
