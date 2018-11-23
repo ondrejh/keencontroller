@@ -2,6 +2,7 @@
 arduino micro based keyboard (mame controller) suitable for commander keen
 
 ## status:
+- button model (learning freecad)
 - all possible inputs of arduino covered now
 - basic arduino program with 3 keys
 
@@ -16,3 +17,8 @@ arduino micro based keyboard (mame controller) suitable for commander keen
 
 ## keys needed
 arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y, n, d, t ...
+
+## model
+\1) button .. done
+2) stick
+3) body
