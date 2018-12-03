@@ -13,12 +13,13 @@ arduino micro based keyboard (mame controller) suitable for commander keen
 ## concept proof:
 \1) connect a few buttons to arduino micro .. done
 \2) make it keyboarding .. done
-3) can i do doublekey (y/t and n/d)?
+3) can i do doublekey (y/t and n/d)? (multikey)
 
 ## keys needed
-arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y, n, d, t ...
+arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y/t, n/d/enter ...
 
 ## model
 \1) button .. done
-2) stick
-3) body
+\2) stick .. done
+\3) body .. done
+4) complete
