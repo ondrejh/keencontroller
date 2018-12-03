@@ -29,22 +29,22 @@ int previousButtonState = HIGH;   // for checking the state of a pushButton
 int counter = 0;                  // button push counter
 
 // KEY MAP (0 if not used)
-#define D02_KEY KEY_LEFT_CTRL
-#define D03_KEY KEY_LEFT_ALT
-#define D04_KEY 'd'
-#define D05_KEY 0
-#define D06_KEY 0
-#define D07_KEY 0
-#define D08_KEY 0
-#define D09_KEY 0
-#define D10_KEY 0
-#define D14_KEY 0
-#define D15_KEY 0
-#define D16_KEY 0
+#define D02_KEY ' '
+#define D03_KEY KEY_LEFT_CTRL
+#define D04_KEY KEY_LEFT_ALT
+#define D05_KEY 'd'
+#define D06_KEY 't'
+#define D07_KEY '4'
+#define D08_KEY '3'
+#define D09_KEY '2'
+#define D10_KEY KEY_LEFT_ARROW
+#define D14_KEY KEY_RIGHT_ARROW
+#define D15_KEY KEY_UP_ARROW
+#define D16_KEY KEY_DOWN_ARROW
 #define A00_KEY 0
 #define A01_KEY 0
-#define A02_KEY 0
-#define A03_KEY 0
+#define A02_KEY KEY_ESC
+#define A03_KEY '1'
 
 // PORT MASKS
 
