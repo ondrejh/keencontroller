@@ -32,8 +32,8 @@ int counter = 0;                  // button push counter
 const uint8_t D02_KEYS[2] = {' ', 0};
 const uint8_t D03_KEYS[2] = {KEY_LEFT_CTRL, 0};
 const uint8_t D04_KEYS[2] = {KEY_LEFT_ALT, 0};
-const uint8_t D05_KEYS[4] = {'t', 'y', KEY_RETURN, 0};
-const uint8_t D06_KEYS[3] = {'d', 'n', 0};
+const uint8_t D05_KEYS[5] = {'y', KEY_RETURN, 'd', KEY_RETURN, 0};
+const uint8_t D06_KEYS[5] = {'n', KEY_RETURN, 't', KEY_RETURN, 0};
 const uint8_t D07_KEYS[2] = {'4', 0};
 const uint8_t D08_KEYS[2] = {'3', 0};
 const uint8_t D09_KEYS[2] = {'2', 0};
@@ -89,6 +89,7 @@ void key_set(bool stat, uint8_t *key) {
       Keyboard.release(*k++);
     else
       Keyboard.press(*k++);
+    delay(100);
   }
 }
 
