@@ -28,23 +28,23 @@ const int buttonPin = 4;          // input pin for pushbutton
 int previousButtonState = HIGH;   // for checking the state of a pushButton
 int counter = 0;                  // button push counter
 
-// KEY MAP (0 if not used)
-#define D02_KEY ' '
-#define D03_KEY KEY_LEFT_CTRL
-#define D04_KEY KEY_LEFT_ALT
-#define D05_KEY 'd'
-#define D06_KEY 't'
-#define D07_KEY '4'
-#define D08_KEY '3'
-#define D09_KEY '2'
-#define D10_KEY KEY_LEFT_ARROW
-#define D14_KEY KEY_RIGHT_ARROW
-#define D15_KEY KEY_UP_ARROW
-#define D16_KEY KEY_DOWN_ARROW
-#define A00_KEY 0
-#define A01_KEY 0
-#define A02_KEY KEY_ESC
-#define A03_KEY '1'
+// KEY MAP (key = uint8_t array ending 0, 0 not used)
+const uint8_t D02_KEYS[2] = {' ', 0};
+const uint8_t D03_KEYS[2] = {KEY_LEFT_CTRL, 0};
+const uint8_t D04_KEYS[2] = {KEY_LEFT_ALT, 0};
+const uint8_t D05_KEYS[4] = {'t', 'y', KEY_RETURN, 0};
+const uint8_t D06_KEYS[3] = {'d', 'n', 0};
+const uint8_t D07_KEYS[2] = {'4', 0};
+const uint8_t D08_KEYS[2] = {'3', 0};
+const uint8_t D09_KEYS[2] = {'2', 0};
+const uint8_t D10_KEYS[2] = {KEY_LEFT_ARROW, 0};
+const uint8_t D14_KEYS[2] = {KEY_RIGHT_ARROW, 0};
+const uint8_t D15_KEYS[2] = {KEY_UP_ARROW, 0};
+const uint8_t D16_KEYS[2] = {KEY_DOWN_ARROW, 0};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[2] = {KEY_ESC, 0};
+const uint8_t A03_KEYS[2] = {'1', 0};
 
 // PORT MASKS
 
@@ -81,14 +81,15 @@ int counter = 0;                  // button push counter
 
 uint8_t pB = PORTB_MASK, pC = PORTC_MASK, pD = PORTD_MASK, pE = PORTE_MASK, pF = PORTF_MASK;
 
-void key_set(bool stat, int key) {
-  if (key == 0)
-    return;
-    
-  if (stat)
-    Keyboard.release(key);
-  else
-    Keyboard.press(key);
+void key_set(bool stat, uint8_t *key) {
+  uint8_t *k = key;
+
+  while (*k != 0) {
+    if (stat)
+      Keyboard.release(*k++);
+    else
+      Keyboard.press(*k++);
+  }
 }
 
 void setup() {
@@ -118,42 +119,42 @@ void loop() {
   // PORT B
   p = PINB & PORTB_MASK;
   px = pB ^ p;
-  if (px & D08) key_set(p & D08, D08_KEY);
-  if (px & D09) key_set(p & D09, D09_KEY);
-  if (px & D10) key_set(p & D10, D10_KEY);
-  if (px & D14) key_set(p & D14, D14_KEY);
-  if (px & D15) key_set(p & D15, D15_KEY);
-  if (px & D16) key_set(p & D16, D16_KEY);
+  if (px & D08) key_set(p & D08, D08_KEYS);
+  if (px & D09) key_set(p & D09, D09_KEYS);
+  if (px & D10) key_set(p & D10, D10_KEYS);
+  if (px & D14) key_set(p & D14, D14_KEYS);
+  if (px & D15) key_set(p & D15, D15_KEYS);
+  if (px & D16) key_set(p & D16, D16_KEYS);
   pB = p;
 
   // PORT C
   p = PINC & PORTC_MASK;
   px = pC ^ p;
-  if (px & D05) key_set(p & D05, D05_KEY);
+  if (px & D05) key_set(p & D05, D05_KEYS);
   pC = p;
   
   // PORT D
   p = PIND & PORTD_MASK;
   px = pD ^ p;
-  if (px & D02) key_set(p & D02, D02_KEY);
-  if (px & D03) key_set(p & D03, D03_KEY);
-  if (px & D04) key_set(p & D04, D04_KEY);
-  if (px & D06) key_set(p & D06, D06_KEY);
+  if (px & D02) key_set(p & D02, D02_KEYS);
+  if (px & D03) key_set(p & D03, D03_KEYS);
+  if (px & D04) key_set(p & D04, D04_KEYS);
+  if (px & D06) key_set(p & D06, D06_KEYS);
   pD = p;
 
   // PORT E
   p = PINE & PORTE_MASK;
   px = pE ^ p;
-  if (px & D07) key_set(p & D07, D07_KEY);
+  if (px & D07) key_set(p & D07, D07_KEYS);
   pE = p;
 
   // PORT F
   p = PINF & PORTF_MASK;
   px = pF ^ p;
-  if (px & A00) key_set(p & A00, A00_KEY);
-  if (px & A01) key_set(p & A01, A01_KEY);
-  if (px & A02) key_set(p & A02, A02_KEY);
-  if (px & A03) key_set(p & A03, A03_KEY);
+  if (px & A00) key_set(p & A00, A00_KEYS);
+  if (px & A01) key_set(p & A01, A01_KEYS);
+  if (px & A02) key_set(p & A02, A02_KEYS);
+  if (px & A03) key_set(p & A03, A03_KEYS);
   pF = p;
 }
 
