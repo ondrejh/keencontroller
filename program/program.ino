@@ -18,6 +18,7 @@
  modification to keencontroller (OH):
  started: 20.11.2018 - input settings, keyboard print tested
  first useful version: 3.12.2018 - multikey solved by rotating
+ key function unified
  */
 
 #include "Keyboard.h"
@@ -78,10 +79,10 @@ uint8_t pB = PORTB_MASK, pC = PORTC_MASK, pD = PORTD_MASK, pE = PORTE_MASK, pF =
 uint8_t rotCnt[16];
 
 void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
-  if (key[0] == 0)
+  if (key[0] == 0) // 0 keys to press .. do nothing
     return;
     
-  switch (key[0] & 0xF0) {
+  switch (key[0] & 0xF0) { // select key type
     
   case 0x00: // fast key(s)
     if (stat)
@@ -106,29 +107,6 @@ void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
   default: // unknown type, do nothing
     break;
   }
-}
-
-/*void key_set(bool stat, uint8_t key) {
-  if (key != 0) {
-    if (stat)
-      Keyboard.release(key);
-    else
-      Keyboard.press(key);
-  }
-}*/
-
-void multikey_set(bool stat, uint8_t *kp, uint8_t *keys) {
-  int i = *kp;
-  if (keys[i]==0)
-    i = 0;
-    
-  if (stat) {
-    Keyboard.release(keys[i]);
-    i++; 
-  }
-  else 
-    Keyboard.press(keys[i]);
-  *kp = i;
 }
 
 void setup() {
