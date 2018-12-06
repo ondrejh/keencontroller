@@ -1,34 +1,28 @@
 /*
- Keyboard message test
+ Keyboard emulator for playing Commander Keen.
 
  For the Arduino Leonardo and Micro.
 
- Sends a text string when a button is pressed.
-
  The circuit:
- * pushbutton attached from pin 2,3,4 to GND
+ * set of pushbuttons and microswitch joystick attached from pin to GND.
 
+ Original example code:
  created 24 Oct 2011
  modified 27 Mar 2012
  by Tom Igoe
  modified 11 Nov 2013
  by Scott Fitzgerald
 
- This example code is in the public domain.
-
  http://www.arduino.cc/en/Tutorial/KeyboardMessage
 
  modification to keencontroller (OH):
  started: 20.11.2018 - input settings, keyboard print tested
+ first useful version: 3.12.2018 - multikey solved by rotating
  */
 
 #include "Keyboard.h"
 
-const int buttonPin = 4;          // input pin for pushbutton
-int previousButtonState = HIGH;   // for checking the state of a pushButton
-int counter = 0;                  // button push counter
-
-// KEY MAP (key = uint8_t array ending 0, 0 not used)
+// KEY MAP
 const uint8_t D02_KEY = ' ';
 const uint8_t D03_KEY = KEY_LEFT_CTRL;
 const uint8_t D04_KEY = KEY_LEFT_ALT;
