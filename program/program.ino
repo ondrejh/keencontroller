@@ -23,23 +23,28 @@
 
 #include "Keyboard.h"
 
+// KEY TYPE
+#define KT_FST 0x00
+#define KT_ROT 0x10
+#define KT_QUE 0x20
+
 // KEY MAP
-const uint8_t D02_KEYS[2] = {0x01, ' '};
-const uint8_t D03_KEYS[2] = {0x01, KEY_LEFT_CTRL};
-const uint8_t D04_KEYS[2] = {0x01, KEY_LEFT_ALT};
-const uint8_t D05_KEYS[4] = {0x13, 'd', 'y', KEY_RETURN};
-const uint8_t D06_KEYS[4] = {0x13, 't', 'n', KEY_F5};
-const uint8_t D07_KEYS[2] = {0x01, '4'};
-const uint8_t D08_KEYS[2] = {0x01, '3'};
-const uint8_t D09_KEYS[2] = {0x01, '2'};
-const uint8_t D10_KEYS[2] = {0x01, KEY_LEFT_ARROW};
-const uint8_t D14_KEYS[2] = {0x01, KEY_RIGHT_ARROW};
-const uint8_t D15_KEYS[2] = {0x01, KEY_UP_ARROW};
-const uint8_t D16_KEYS[2] = {0x01, KEY_DOWN_ARROW};
-const uint8_t A00_KEYS[1] = {0x00};
-const uint8_t A01_KEYS[1] = {0x00};
-const uint8_t A02_KEYS[2] = {0x01, KEY_ESC};
-const uint8_t A03_KEYS[2] = {0x01, '1'};
+const uint8_t D02_KEYS[2] = {KT_FST + 1, ' '};
+const uint8_t D03_KEYS[2] = {KT_FST + 1, KEY_LEFT_CTRL};
+const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_LEFT_ALT};
+const uint8_t D05_KEYS[4] = {KT_ROT + 3, 'd', 'y', KEY_RETURN};
+const uint8_t D06_KEYS[4] = {KT_ROT + 3, 't', 'n', KEY_F5};
+const uint8_t D07_KEYS[2] = {KT_FST + 1, '4'};
+const uint8_t D08_KEYS[2] = {KT_FST + 1, '3'};
+const uint8_t D09_KEYS[2] = {KT_FST + 1, '2'};
+const uint8_t D10_KEYS[2] = {KT_FST + 1, KEY_LEFT_ARROW};
+const uint8_t D14_KEYS[2] = {KT_FST + 1, KEY_RIGHT_ARROW};
+const uint8_t D15_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D16_KEYS[2] = {KT_FST + 1, KEY_DOWN_ARROW};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[2] = {KT_FST + 1, KEY_ESC};
+const uint8_t A03_KEYS[2] = {KT_FST + 1, '1'};
 
 // PORT MASKS
 
@@ -77,6 +82,22 @@ const uint8_t A03_KEYS[2] = {0x01, '1'};
 uint8_t pB = PORTB_MASK, pC = PORTC_MASK, pD = PORTD_MASK, pE = PORTE_MASK, pF = PORTF_MASK;
 
 uint8_t rotCnt[16];
+
+#define QUE_PRESS_TIME 200
+#define QUE_RELEASE_TIME 100
+#define QUELEN 16
+uint8_t queue[QUELEN];
+uint8_t quein = 0;
+uint8_t queout = 0;
+
+void que_insert(uint8_t key) {
+  uint8_t next = quein + 1;
+  next %= QUELEN;
+  if (next!=queout) {
+    queue[quein] = key;
+    quein = next;
+  }
+}
 
 void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
   if (key[0] == 0) // 0 keys to press .. do nothing
@@ -177,5 +198,33 @@ void loop() {
   if (px & A02) key_set(p & A02, &rotCnt[13], A02_KEYS);
   if (px & A03) key_set(p & A03, &rotCnt[14], A03_KEYS);
   pF = p;
+
+  static uint8_t questatus = 0;
+  static uint32_t quetime = 0;
+  switch (questatus) {
+  case 0:
+    if (quein!=queout) {
+      Keyboard.press(queue[queout]);
+      quetime = millis();
+      questatus++;
+    }
+    break;
+  case 1:
+    if ((millis()-quetime) >= QUE_PRESS_TIME) {
+      Keyboard.release(queue[queout]);
+      queout ++;
+      queout %= QUELEN;
+      quetime = millis();
+      questatus++;
+    }
+    break;
+  case 2:
+    if ((millis()-quetime) >= QUE_RELEASE_TIME)
+      questatus=0;
+    break;
+  default:
+    questatus = 0;
+    break;
+  }
 }
 
