@@ -89,11 +89,13 @@ uint8_t rotCnt[16];
 uint8_t queue[QUELEN];
 uint8_t quein = 0;
 uint8_t queout = 0;
+uint8_t questatus = 0;
+unsigned long quetime = 0;
 
 void que_insert(uint8_t key) {
   uint8_t next = quein + 1;
   next %= QUELEN;
-  if (next!=queout) {
+  if (next != queout) {
     queue[quein] = key;
     quein = next;
   }
@@ -125,6 +127,12 @@ void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
     }
     else
       Keyboard.press(key[*rot]);
+    break;
+
+  case KT_QUE: // queue
+    for (int i=1; i<=key[0]&0x0F; i++) {
+      que_insert(key[i]);
+    }
     break;
 
   default: // unknown type, do nothing
@@ -201,28 +209,28 @@ void loop() {
   if (px & A03) key_set(p & A03, &rotCnt[14], A03_KEYS);
   pF = p;
 
-  static uint8_t questatus = 0;
-  static uint32_t quetime = 0;
+  unsigned long now = millis();
   switch (questatus) {
   case 0:
     if (quein!=queout) {
       Keyboard.press(queue[queout]);
-      quetime = millis();
+      quetime = now;
       questatus++;
     }
     break;
   case 1:
-    if ((millis()-quetime) >= QUE_PRESS_TIME) {
+    if ((now - quetime) >= QUE_PRESS_TIME) {
       Keyboard.release(queue[queout]);
-      queout ++;
-      queout %= QUELEN;
-      quetime = millis();
+      int next = (queout + 1) % QUELEN;
+      queout = next;
+      quetime = now;
       questatus++;
     }
     break;
   case 2:
-    if ((millis()-quetime) >= QUE_RELEASE_TIME)
+    if ((now - quetime) >= QUE_RELEASE_TIME) {
       questatus=0;
+    }
     break;
   default:
     questatus = 0;
