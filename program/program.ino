@@ -105,7 +105,7 @@ void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
     
   switch (key[0] & 0xF0) { // select key type
     
-  case 0x00: // fast key(s)
+  case KT_FST: // fast key(s)
     if (stat)
       for (int i = (key[0] & 0x0F); i > 0; i--)
         Keyboard.release(key[i]);
@@ -114,12 +114,14 @@ void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
         Keyboard.press(key[i]);
     break;
     
-  case 0x10: // rotate (changing) keys
+  case KT_ROT: // rotate (changing) keys
+    if (*rot == 0)
+      *rot = 1;
     if (stat) {
       Keyboard.release(key[*rot]);
       *rot += 1;
-      if (*rot >= (key[0] & 0x0F))
-        *rot = 0;
+      if (*rot > (key[0] & 0x0F))
+        *rot = 1;
     }
     else
       Keyboard.press(key[*rot]);
