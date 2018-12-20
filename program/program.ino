@@ -28,7 +28,10 @@
 #define KT_ROT 0x10
 #define KT_QUE 0x20
 
+#define DAVE
+
 // KEY MAP
+#ifdef KEEN
 const uint8_t D02_KEYS[2] = {KT_FST + 1, ' '};
 const uint8_t D03_KEYS[2] = {KT_FST + 1, KEY_LEFT_CTRL};
 const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_LEFT_ALT};
@@ -45,6 +48,25 @@ const uint8_t A00_KEYS[1] = {0};
 const uint8_t A01_KEYS[1] = {0};
 const uint8_t A02_KEYS[2] = {KT_FST + 1, KEY_ESC};
 const uint8_t A03_KEYS[2] = {KT_FST + 1, '1'};
+#endif
+#ifdef DAVE
+const uint8_t D02_KEYS[2] = {KT_FST + 1, ' '};
+const uint8_t D03_KEYS[2] = {KT_FST + 1, KEY_LEFT_ALT};
+const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_TAB};
+const uint8_t D05_KEYS[2] = {KT_FST + 1, 'y'};
+const uint8_t D06_KEYS[2] = {KT_FST + 1, 'n'};
+const uint8_t D07_KEYS[1] = {0};
+const uint8_t D08_KEYS[1] = {0};
+const uint8_t D09_KEYS[1] = {0};
+const uint8_t D10_KEYS[2] = {KT_FST + 1, KEY_LEFT_ARROW};
+const uint8_t D14_KEYS[2] = {KT_FST + 1, KEY_RIGHT_ARROW};
+const uint8_t D15_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D16_KEYS[2] = {KT_FST + 1, KEY_DOWN_ARROW};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[2] = {KT_FST + 1, KEY_ESC};
+const uint8_t A03_KEYS[1] = {0};
+#endif
 
 // PORT MASKS
 
