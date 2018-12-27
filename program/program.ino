@@ -88,6 +88,18 @@ const uint8_t A02_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'Q'};
 const uint8_t A03_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'S'};
 #endif
 
+// Filter
+#define FILTER_TIME_MS 1
+#define FILTER_LENGTH 3
+uint32_t flt_time;
+uint8_t PBf[FILTER_LENGTH];
+uint8_t PCf[FILTER_LENGTH];
+uint8_t PDf[FILTER_LENGTH];
+uint8_t PEf[FILTER_LENGTH];
+uint8_t PFf[FILTER_LENGTH];
+uint8_t Pp=0;
+uint8_t PB=0, PC=0, PD=0, PE=0, PF=0;
+
 // PORT MASKS
 
 // PORTB (--- D10 D09 D08 D14 D16 D15 ---)
@@ -208,8 +220,40 @@ void setup() {
 void loop() {
   uint8_t p, px;
 
+  uint32_t now = millis();
+  if ((flt_time-now) >= FILTER_TIME_MS)
+  {
+    flt_time = now;
+
+    // read inputs
+    PBf[Pp] = PINB & PORTB_MASK;
+    PCf[Pp] = PINC & PORTC_MASK;
+    PDf[Pp] = PIND & PORTD_MASK;
+    PEf[Pp] = PINE & PORTE_MASK;
+    PFf[Pp] = PINF & PORTF_MASK;
+    Pp ++;
+    Pp %= FILTER_LENGTH;
+
+    // discover changing bits
+    uint8_t chB=0, chC=0, chD=0, chE=0, chF=0;
+    for (int i=1; i<FILTER_LENGTH; i++) {
+      chB |= PBf[0] ^ PBf[i];
+      chC |= PCf[0] ^ PCf[i];
+      chD |= PDf[0] ^ PDf[i];
+      chE |= PEf[0] ^ PEf[i];
+      chF |= PFf[0] ^ PFf[i];
+    }
+
+    // copy stable bits into output
+    PB = (PB & chB) | (PBf[0] & ~chB);
+    PC = (PC & chC) | (PCf[0] & ~chC);
+    PD = (PD & chD) | (PDf[0] & ~chD);
+    PE = (PE & chE) | (PEf[0] & ~chE);
+    PF = (PF & chF) | (PFf[0] & ~chF);
+  }
+  
   // PORT B
-  p = PINB & PORTB_MASK;
+  p = PB;//PINB & PORTB_MASK;
   px = pB ^ p;
   if (px & D08) key_set(p & D08, &rotCnt[0], D08_KEYS);
   if (px & D09) key_set(p & D09, &rotCnt[1], D09_KEYS);
@@ -220,14 +264,14 @@ void loop() {
   pB = p;
 
   // PORT C
-  p = PINC & PORTC_MASK;
+  p = PC;//PINC & PORTC_MASK;
   px = pC ^ p;
   //if (px & D05) multikey_set(p & D07, &d05_kp, D05_KEYS);
   if (px & D05) key_set(p & D07, &rotCnt[6], D05_KEYS);
   pC = p;
   
   // PORT D
-  p = PIND & PORTD_MASK;
+  p = PD;//PIND & PORTD_MASK;
   px = pD ^ p;
   if (px & D02) key_set(p & D02, &rotCnt[7], D02_KEYS);
   if (px & D03) key_set(p & D03, &rotCnt[6], D03_KEYS);
@@ -237,13 +281,13 @@ void loop() {
   pD = p;
 
   // PORT E
-  p = PINE & PORTE_MASK;
+  p = PE;//PINE & PORTE_MASK;
   px = pE ^ p;
   if (px & D07) key_set(p & D07, &rotCnt[10], D07_KEYS);
   pE = p;
 
   // PORT F
-  p = PINF & PORTF_MASK;
+  p = PF;//PINF & PORTF_MASK;
   px = pF ^ p;
   if (px & A00) key_set(p & A00, &rotCnt[11], A00_KEYS);
   if (px & A01) key_set(p & A01, &rotCnt[12], A01_KEYS);
@@ -251,7 +295,6 @@ void loop() {
   if (px & A03) key_set(p & A03, &rotCnt[14], A03_KEYS);
   pF = p;
 
-  unsigned long now = millis();
   switch (questatus) {
   case 0:
     if (quein!=queout) {
