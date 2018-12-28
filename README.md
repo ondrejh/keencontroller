@@ -1,5 +1,7 @@
-# keencontroller
-arduino micro based keyboard (mame controller) suitable for commander keen
+# Keen Controller
+Arduino micro based keyboard (mame controller) suitable for playing [Commander Keen](http://www.shikadi.net/keenwiki/Main_Page).
+
+![Final product look](/doc/keen_final.jpg)
 
 ## status:
 - button model (learning freecad)
