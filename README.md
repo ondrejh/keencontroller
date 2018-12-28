@@ -3,25 +3,29 @@ Arduino micro based keyboard (mame controller) suitable for playing [Commander K
 
 ![Final product look](/doc/keen_final.jpg)
 
-## status:
+## The challenge:
+Commander Keen looks like very good game for simple "few buttons" controller. Arrows, jump, fire .. that should be it. Well, its not. There are alot of "hidden" keys you need when not additional keyboard is available (for example in mame box). Finally, when using only joystick and 10 buttons, there are still some limitations like shared keys or limited save possitions.
+
+## Project status:
+The project is basically finished. The alternative keymaps for other games were added, multiple key was implemented, key sharing by rotating, ect.
+
 - button model (learning freecad)
 - all possible inputs of arduino covered now
 - basic arduino program with 3 keys
+- commander keen keymap
+- wooden body
+- dangerous dave and prince 2 keymaps
 
-## next steps:
-1) concept proof
-2) model (learn freecad)
+## Keys needed (Commander Keen 1-3 / 4-6)
+Arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y/t, n/d/enter ...
 
-## concept proof:
-\1) connect a few buttons to arduino micro .. done
-\2) make it keyboarding .. done
-3) can i do doublekey (y/t and n/d)? (multikey)
+## Next steps:
 
-## keys needed
-arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y/t, n/d/enter ...
+1) Implement multiple keypress by queue (still not work).
+2) Model (learn freecad, better).
+3) Automatic keymap change (with some gui).
 
-## model
-\1) button .. done
-\2) stick .. done
-\3) body .. done
-4) complete
+## Guts, if youre interested:
+
+![How it looks inside](/doc/keen_guts.jpg)
+
