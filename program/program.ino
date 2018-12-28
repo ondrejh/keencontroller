@@ -1,52 +1,104 @@
 /*
- Keyboard message test
+ Keyboard emulator for playing Commander Keen.
 
  For the Arduino Leonardo and Micro.
 
- Sends a text string when a button is pressed.
-
  The circuit:
- * pushbutton attached from pin 2,3,4 to GND
+ * set of pushbuttons and microswitch joystick attached from pin to GND.
 
+ Original example code:
  created 24 Oct 2011
  modified 27 Mar 2012
  by Tom Igoe
  modified 11 Nov 2013
  by Scott Fitzgerald
 
- This example code is in the public domain.
-
  http://www.arduino.cc/en/Tutorial/KeyboardMessage
 
  modification to keencontroller (OH):
  started: 20.11.2018 - input settings, keyboard print tested
+ first useful version: 3.12.2018 - multikey solved by rotating
+ key function unified
  */
 
 #include "Keyboard.h"
 
-const int buttonPin = 4;          // input pin for pushbutton
-int previousButtonState = HIGH;   // for checking the state of a pushButton
-int counter = 0;                  // button push counter
+// KEY TYPE
+#define KT_FST 0x00
+#define KT_ROT 0x10
+#define KT_QUE 0x20
 
-// KEY MAP (key = uint8_t array ending 0, 0 not used)
-const uint8_t D02_KEY = ' ';
-const uint8_t D03_KEY = KEY_LEFT_CTRL;
-const uint8_t D04_KEY = KEY_LEFT_ALT;
-const uint8_t D05_KEYS[4] = {'d', 'y', KEY_RETURN, 0};
-uint8_t d05_kp = 0;
-const uint8_t D06_KEYS[4] = {'t', 'n', KEY_F5, 0};
-uint8_t d06_kp = 0;
-const uint8_t D07_KEY = '4';
-const uint8_t D08_KEY = '3';
-const uint8_t D09_KEY = '2';
-const uint8_t D10_KEY = KEY_LEFT_ARROW;
-const uint8_t D14_KEY = KEY_RIGHT_ARROW;
-const uint8_t D15_KEY = KEY_UP_ARROW;
-const uint8_t D16_KEY = KEY_DOWN_ARROW;
-const uint8_t A00_KEY = 0;
-const uint8_t A01_KEY = 0;
-const uint8_t A02_KEY = KEY_ESC;
-const uint8_t A03_KEY = '1';
+//#define KEEN
+//#define DAVE
+#define PRINCE2
+
+// KEY MAP
+#ifdef KEEN
+const uint8_t D02_KEYS[2] = {KT_FST + 1, ' '};
+const uint8_t D03_KEYS[2] = {KT_FST + 1, KEY_LEFT_CTRL};
+const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_LEFT_ALT};
+const uint8_t D05_KEYS[4] = {KT_ROT + 3, 'd', 'y', KEY_RETURN};
+const uint8_t D06_KEYS[4] = {KT_ROT + 3, 't', 'n', KEY_F5};
+const uint8_t D07_KEYS[2] = {KT_FST + 1, '4'};
+const uint8_t D08_KEYS[2] = {KT_FST + 1, '3'};
+const uint8_t D09_KEYS[2] = {KT_FST + 1, '2'};
+const uint8_t D10_KEYS[2] = {KT_FST + 1, KEY_LEFT_ARROW};
+const uint8_t D14_KEYS[2] = {KT_FST + 1, KEY_RIGHT_ARROW};
+const uint8_t D15_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D16_KEYS[2] = {KT_FST + 1, KEY_DOWN_ARROW};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[2] = {KT_FST + 1, KEY_ESC};
+const uint8_t A03_KEYS[2] = {KT_FST + 1, '1'};
+#endif
+#ifdef DAVE
+const uint8_t D02_KEYS[2] = {KT_FST + 1, KEY_LEFT_ALT};
+const uint8_t D03_KEYS[2] = {KT_FST + 1, ' ' };
+const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_TAB};
+const uint8_t D05_KEYS[2] = {KT_FST + 1, 'y'};
+const uint8_t D06_KEYS[2] = {KT_FST + 1, 'n'};
+const uint8_t D07_KEYS[1] = {0};
+const uint8_t D08_KEYS[1] = {0};
+const uint8_t D09_KEYS[1] = {0};
+const uint8_t D10_KEYS[2] = {KT_FST + 1, KEY_LEFT_ARROW};
+const uint8_t D14_KEYS[2] = {KT_FST + 1, KEY_RIGHT_ARROW};
+const uint8_t D15_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D16_KEYS[2] = {KT_FST + 1, KEY_DOWN_ARROW};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[2] = {KT_FST + 1, KEY_ESC};
+const uint8_t A03_KEYS[1] = {0};
+#endif
+#ifdef PRINCE2
+const uint8_t D02_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D03_KEYS[2] = {KT_FST + 1, KEY_LEFT_CTRL};
+const uint8_t D04_KEYS[2] = {KT_FST + 1, KEY_LEFT_SHIFT};
+const uint8_t D05_KEYS[2] = {KT_FST + 1, KEY_RETURN};
+const uint8_t D06_KEYS[2] = {KT_FST + 1, KEY_ESC};
+const uint8_t D07_KEYS[3] = {KT_FST + 2, KEY_LEFT_ALT, 'O'};
+const uint8_t D08_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'A'};
+const uint8_t D09_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'S'};
+const uint8_t D10_KEYS[2] = {KT_FST + 1, KEY_LEFT_ARROW};
+const uint8_t D14_KEYS[2] = {KT_FST + 1, KEY_RIGHT_ARROW};
+const uint8_t D15_KEYS[2] = {KT_FST + 1, KEY_UP_ARROW};
+const uint8_t D16_KEYS[2] = {KT_FST + 1, KEY_DOWN_ARROW};
+const uint8_t A00_KEYS[1] = {0};
+const uint8_t A01_KEYS[1] = {0};
+const uint8_t A02_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'Q'};
+const uint8_t A03_KEYS[3] = {KT_FST + 2, KEY_LEFT_CTRL, 'S'};
+#endif
+
+// Filter
+#define FILTER_TIME_MS 1
+#define FILTER_LENGTH 3
+uint32_t flt_time;
+uint8_t PBf[FILTER_LENGTH];
+uint8_t PCf[FILTER_LENGTH];
+uint8_t PDf[FILTER_LENGTH];
+uint8_t PEf[FILTER_LENGTH];
+uint8_t PFf[FILTER_LENGTH];
+uint8_t Pp=0;
+uint8_t PB=0, PC=0, PD=0, PE=0, PF=0;
 
 // PORT MASKS
 
@@ -83,27 +135,63 @@ const uint8_t A03_KEY = '1';
 
 uint8_t pB = PORTB_MASK, pC = PORTC_MASK, pD = PORTD_MASK, pE = PORTE_MASK, pF = PORTF_MASK;
 
-void key_set(bool stat, uint8_t key) {
-  if (key != 0) {
-    if (stat)
-      Keyboard.release(key);
-    else
-      Keyboard.press(key);
+uint8_t rotCnt[16];
+
+#define QUE_PRESS_TIME 200
+#define QUE_RELEASE_TIME 100
+#define QUELEN 16
+uint8_t queue[QUELEN];
+uint8_t quein = 0;
+uint8_t queout = 0;
+uint8_t questatus = 0;
+unsigned long quetime = 0;
+
+void que_insert(uint8_t key) {
+  uint8_t next = quein + 1;
+  next %= QUELEN;
+  if (next != queout) {
+    queue[quein] = key;
+    quein = next;
   }
 }
 
-void multikey_set(bool stat, uint8_t *kp, uint8_t *keys) {
-  int i = *kp;
-  if (keys[i]==0)
-    i = 0;
+void key_set(bool stat, uint8_t *rot, const uint8_t *key) {
+  if (key[0] == 0) // 0 keys to press .. do nothing
+    return;
     
-  if (stat) {
-    Keyboard.release(keys[i]);
-    i++; 
+  switch (key[0] & 0xF0) { // select key type
+    
+  case KT_FST: // fast key(s)
+    if (stat)
+      for (int i = (key[0] & 0x0F); i > 0; i--)
+        Keyboard.release(key[i]);
+    else
+      for (int i = 1; i <= (key[0] & 0x0F); i++)
+        Keyboard.press(key[i]);
+    break;
+    
+  case KT_ROT: // rotate (changing) keys
+    if (*rot == 0)
+      *rot = 1;
+    if (stat) {
+      Keyboard.release(key[*rot]);
+      *rot += 1;
+      if (*rot > (key[0] & 0x0F))
+        *rot = 1;
+    }
+    else
+      Keyboard.press(key[*rot]);
+    break;
+
+  case KT_QUE: // queue
+    for (int i=1; i<=key[0]&0x0F; i++) {
+      que_insert(key[i]);
+    }
+    break;
+
+  default: // unknown type, do nothing
+    break;
   }
-  else 
-    Keyboard.press(keys[i]);
-  *kp = i;
 }
 
 void setup() {
@@ -123,6 +211,8 @@ void setup() {
   DDRF |= PORTF_MASK;
   PORTF |= PORTF_MASK;
 
+  memset(rotCnt, 0, 16);
+
   // initialize control over the keyboard:
   Keyboard.begin();
 }
@@ -130,45 +220,106 @@ void setup() {
 void loop() {
   uint8_t p, px;
 
+  uint32_t now = millis();
+  if ((flt_time-now) >= FILTER_TIME_MS)
+  {
+    flt_time = now;
+
+    // read inputs
+    PBf[Pp] = PINB & PORTB_MASK;
+    PCf[Pp] = PINC & PORTC_MASK;
+    PDf[Pp] = PIND & PORTD_MASK;
+    PEf[Pp] = PINE & PORTE_MASK;
+    PFf[Pp] = PINF & PORTF_MASK;
+    Pp ++;
+    Pp %= FILTER_LENGTH;
+
+    // discover changing bits
+    uint8_t chB=0, chC=0, chD=0, chE=0, chF=0;
+    for (int i=1; i<FILTER_LENGTH; i++) {
+      chB |= PBf[0] ^ PBf[i];
+      chC |= PCf[0] ^ PCf[i];
+      chD |= PDf[0] ^ PDf[i];
+      chE |= PEf[0] ^ PEf[i];
+      chF |= PFf[0] ^ PFf[i];
+    }
+
+    // copy stable bits into output
+    PB = (PB & chB) | (PBf[0] & ~chB);
+    PC = (PC & chC) | (PCf[0] & ~chC);
+    PD = (PD & chD) | (PDf[0] & ~chD);
+    PE = (PE & chE) | (PEf[0] & ~chE);
+    PF = (PF & chF) | (PFf[0] & ~chF);
+  }
+  
   // PORT B
-  p = PINB & PORTB_MASK;
+  p = PB;//PINB & PORTB_MASK;
   px = pB ^ p;
-  if (px & D08) key_set(p & D08, D08_KEY);
-  if (px & D09) key_set(p & D09, D09_KEY);
-  if (px & D10) key_set(p & D10, D10_KEY);
-  if (px & D14) key_set(p & D14, D14_KEY);
-  if (px & D15) key_set(p & D15, D15_KEY);
-  if (px & D16) key_set(p & D16, D16_KEY);
+  if (px & D08) key_set(p & D08, &rotCnt[0], D08_KEYS);
+  if (px & D09) key_set(p & D09, &rotCnt[1], D09_KEYS);
+  if (px & D10) key_set(p & D10, &rotCnt[2], D10_KEYS);
+  if (px & D14) key_set(p & D14, &rotCnt[3], D14_KEYS);
+  if (px & D15) key_set(p & D15, &rotCnt[4], D15_KEYS);
+  if (px & D16) key_set(p & D16, &rotCnt[5], D16_KEYS);
   pB = p;
 
   // PORT C
-  p = PINC & PORTC_MASK;
+  p = PC;//PINC & PORTC_MASK;
   px = pC ^ p;
-  if (px & D05) multikey_set(p & D07, &d05_kp, D05_KEYS);
+  //if (px & D05) multikey_set(p & D07, &d05_kp, D05_KEYS);
+  if (px & D05) key_set(p & D07, &rotCnt[6], D05_KEYS);
   pC = p;
   
   // PORT D
-  p = PIND & PORTD_MASK;
+  p = PD;//PIND & PORTD_MASK;
   px = pD ^ p;
-  if (px & D02) key_set(p & D02, D02_KEY);
-  if (px & D03) key_set(p & D03, D03_KEY);
-  if (px & D04) key_set(p & D04, D04_KEY);
-  if (px & D06) multikey_set(p & D06, &d06_kp, D06_KEYS);
+  if (px & D02) key_set(p & D02, &rotCnt[7], D02_KEYS);
+  if (px & D03) key_set(p & D03, &rotCnt[6], D03_KEYS);
+  if (px & D04) key_set(p & D04, &rotCnt[8], D04_KEYS);
+  //if (px & D06) multikey_set(p & D06, &d06_kp, D06_KEYS);
+  if (px & D06) key_set(p & D06, &rotCnt[9], D06_KEYS);
   pD = p;
 
   // PORT E
-  p = PINE & PORTE_MASK;
+  p = PE;//PINE & PORTE_MASK;
   px = pE ^ p;
-  if (px & D07) key_set(p & D07, D07_KEY);
+  if (px & D07) key_set(p & D07, &rotCnt[10], D07_KEYS);
   pE = p;
 
   // PORT F
-  p = PINF & PORTF_MASK;
+  p = PF;//PINF & PORTF_MASK;
   px = pF ^ p;
-  if (px & A00) key_set(p & A00, A00_KEY);
-  if (px & A01) key_set(p & A01, A01_KEY);
-  if (px & A02) key_set(p & A02, A02_KEY);
-  if (px & A03) key_set(p & A03, A03_KEY);
+  if (px & A00) key_set(p & A00, &rotCnt[11], A00_KEYS);
+  if (px & A01) key_set(p & A01, &rotCnt[12], A01_KEYS);
+  if (px & A02) key_set(p & A02, &rotCnt[13], A02_KEYS);
+  if (px & A03) key_set(p & A03, &rotCnt[14], A03_KEYS);
   pF = p;
+
+  switch (questatus) {
+  case 0:
+    if (quein!=queout) {
+      Keyboard.press(queue[queout]);
+      quetime = now;
+      questatus++;
+    }
+    break;
+  case 1:
+    if ((now - quetime) >= QUE_PRESS_TIME) {
+      Keyboard.release(queue[queout]);
+      int next = (queout + 1) % QUELEN;
+      queout = next;
+      quetime = now;
+      questatus++;
+    }
+    break;
+  case 2:
+    if ((now - quetime) >= QUE_RELEASE_TIME) {
+      questatus=0;
+    }
+    break;
+  default:
+    questatus = 0;
+    break;
+  }
 }
 
