@@ -16,6 +16,14 @@ The project is basically finished. The alternative keymaps for other games were 
 - wooden body
 - dangerous dave and prince 2 keymaps
 
+## BOM:
+
+- [Arduino micro ATmega32U4](https://www.aliexpress.com/item/Free-Shipping-New-Pro-Micro-for-arduino-ATmega32U4-5V-16MHz-Module-with-2-row-pin-header/1348800135.html?spm=2114.search0104.3.1.65653ecf7knLvI&ws_ab_test=searchweb0_0,searchweb201602_5_10065_10068_319_317_10696_10084_453_454_10083_10618_10304_10307_10820_10821_538_537_10302_536_10059_10884_10887_100031_321_322_10103,searchweb201603_53,ppcSwitch_0&algo_expid=e6bf0f1d-14d2-4c70-9fee-68fe26168dd5-0&algo_pvid=e6bf0f1d-14d2-4c70-9fee-68fe26168dd5)
+- [10pcs 24mm arcade buttons](https://www.aliexpress.com/item/10-pcs-factory-price-arcade-button-24mm-Round-Push-Button-Built-in-small-micro-switch-for/32881608601.html?spm=a2g0s.9042311.0.0.7df04c4dFhE223)
+- [Arcade joystick](https://www.aliexpress.com/item/Classic-Arcade-Joystick-4-8-way-DIY-Game-Joystick-Red-Ball-Fighting-Stick-Replacement-Parts-For/32571616716.html?spm=a2g0s.9042311.0.0.7df04c4dFhE223)
+- Wood, glue, screws and resin
+- Wires and solder
+
 ## Keys needed (Commander Keen 1-3 / 4-6)
 Arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y/t, n/d/enter ...
 
