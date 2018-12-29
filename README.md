@@ -37,7 +37,8 @@ Arrows, ctrl, alt, esc, 1 - 9 (or at least some of those), y/t, n/d/enter ...
 2) Model (learn freecad, better).
 3) Automatic keymap change (with some gui).
 
-## Guts, if youre interested:
+## Guts, if youre interested (wire mess hand soldered):
 
 ![How it looks inside](/doc/keen_guts.jpg)
 
+## The End!
